@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ak.smarttask.model.Task
+import com.ak.smarttask.model.TaskStatus
 import com.ak.smarttask.repository.TaskRepository
 import com.ak.smarttask.utils.Constants.LOG_TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,19 +25,23 @@ class TaskViewModel @Inject constructor(private val taskRepository: TaskReposito
   private val _selectedTask = mutableStateOf<Task?>(null)
   val selectedTask: State<Task?> = _selectedTask
 
-  private val _taskStatus = mutableStateOf("")
+  private val _taskStatus = mutableStateOf(TaskStatus.UNRESOLVED)
   val taskStatus = _taskStatus
 
   init {
     fetchTodayTasks()
   }
 
-  fun selectTask(task: Task) {
-    _selectedTask.value = task
+  fun selectTask(taskId: String) {
+    _selectedTask.value = tasks.value.find { it.id == taskId }
   }
 
-  fun updateTaskStatus(taskStatus: String) {
+  fun updateTaskStatus(taskStatus: TaskStatus) {
     _taskStatus.value = taskStatus
+  }
+
+  private fun updateTaskInList(updatedTask: Task) {
+    _tasks.value = tasks.value.map { task -> if (task.id == updatedTask.id) updatedTask else task }
   }
 
   private fun fetchTodayTasks() {

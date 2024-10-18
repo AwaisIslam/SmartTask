@@ -49,9 +49,9 @@ import com.ak.smarttask.model.Task
 import com.ak.smarttask.ui.theme.LightWhite
 import com.ak.smarttask.ui.theme.red
 import com.ak.smarttask.ui.theme.yellow
+import com.ak.smarttask.utils.Constants.AMSI_PRO_BOLD
+import com.ak.smarttask.utils.Constants.AMSI_PRO_REGULAR
 import com.ak.smarttask.utils.Constants.DATE_PATTERN
-import com.ak.smarttask.utils.Constants.amsiproBoldFont
-import com.ak.smarttask.utils.Constants.amsiproRegularFont
 import com.ak.smarttask.viewmodel.TaskViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -117,8 +117,8 @@ private fun TaskList(viewModel: TaskViewModel, navController: NavController, tas
       verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(tasks.sortedWith(compareBy({ it.dueDate }, { it.priority }))) { task ->
           TaskItem(task = task) {
-            viewModel.selectTask(task)
-            navController.navigate("taskDetail")
+            viewModel.selectTask(task.id)
+            navController.navigate("taskDetail/${task.id}")
           }
         }
       }
@@ -187,7 +187,7 @@ fun TaskItem(task: Task, onClick: () -> Unit) {
               Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = task.title ?: stringResource(R.string.no_title),
-                    fontFamily = amsiproBoldFont,
+                    fontFamily = AMSI_PRO_BOLD,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = red,
@@ -200,12 +200,12 @@ fun TaskItem(task: Task, onClick: () -> Unit) {
                       Text(
                           text = stringResource(R.string.due_date),
                           fontSize = 12.sp,
-                          fontFamily = amsiproBoldFont,
+                          fontFamily = AMSI_PRO_BOLD,
                           color = Color.Gray)
                       Text(
                           text = stringResource(R.string.days_left),
                           fontSize = 12.sp,
-                          fontFamily = amsiproBoldFont,
+                          fontFamily = AMSI_PRO_BOLD,
                           color = Color.Gray)
                     }
                 Row(
@@ -214,13 +214,13 @@ fun TaskItem(task: Task, onClick: () -> Unit) {
                       Text(
                           text = task.dueDate ?: stringResource(R.string.no_due_date),
                           fontSize = 12.sp,
-                          fontFamily = amsiproRegularFont,
+                          fontFamily = AMSI_PRO_REGULAR,
                           fontWeight = FontWeight.Bold,
                           color = red)
                       Text(
                           text = daysLeft.toString(),
                           fontSize = 12.sp,
-                          fontFamily = amsiproRegularFont,
+                          fontFamily = AMSI_PRO_REGULAR,
                           fontWeight = FontWeight.Bold,
                           color = red)
                     }
