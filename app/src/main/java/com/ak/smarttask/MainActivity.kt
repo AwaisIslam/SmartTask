@@ -46,8 +46,11 @@ class MainActivity : ComponentActivity() {
                   navController = navController)
             }
 
-            composable(route = "taskDetail") {
-              TaskDetailScreen(viewModel = taskViewModel, navController)
+            composable(route = "taskDetail/{taskId}") { backStackEntry ->
+              val taskId = backStackEntry.arguments?.getString("taskId")
+              taskId?.let { id ->
+                TaskDetailScreen(taskId = id, viewModel = taskViewModel, navController)
+              }
             }
           }
         }

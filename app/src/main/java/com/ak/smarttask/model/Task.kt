@@ -8,5 +8,12 @@ data class Task(
     @SerializedName("DueDate") val dueDate: String?,
     @SerializedName("Title") val title: String?,
     @SerializedName("Description") val description: String?,
-    @SerializedName("Priority") val priority: Int
+    @SerializedName("Priority") val priority: Int,
+    val taskStatus: TaskStatus = TaskStatus.UNRESOLVED
 )
+
+enum class TaskStatus {
+  UNRESOLVED,
+  RESOLVED,
+  CANNOT_RESOLVE
+}

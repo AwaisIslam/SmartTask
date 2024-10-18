@@ -34,14 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ak.smarttask.R
+import com.ak.smarttask.model.Task
+import com.ak.smarttask.model.TaskStatus
 import com.ak.smarttask.ui.theme.LightWhite
 import com.ak.smarttask.ui.theme.green
 import com.ak.smarttask.ui.theme.orange
 import com.ak.smarttask.ui.theme.red
 import com.ak.smarttask.ui.theme.yellow
 import com.ak.smarttask.utils.Constants
-import com.ak.smarttask.utils.Constants.STATUS_RESOLVED
-import com.ak.smarttask.utils.Constants.STATUS_UNRESOLVED
 import com.ak.smarttask.viewmodel.TaskViewModel
 
 @Composable
@@ -64,7 +64,7 @@ fun TaskDetailScreenToolbar(
           fontSize = 20.sp,
           fontWeight = FontWeight.Bold,
           color = White,
-          fontFamily = Constants.amsiproRegularFont,
+          fontFamily = Constants.AMSI_PRO_REGULAR,
           modifier = Modifier.align(Alignment.CenterVertically))
     }
   }
@@ -72,19 +72,20 @@ fun TaskDetailScreenToolbar(
 
 @Composable
 fun TaskDetailScreen(
+    taskId: String,
     viewModel: TaskViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
 
-  val task = viewModel.selectedTask.value
+  val task = viewModel.tasks.value.find { it.id == taskId }
   val taskStatus = viewModel.taskStatus.value
 
   val statusColor =
       when (taskStatus) {
-        STATUS_RESOLVED -> green
-        STATUS_UNRESOLVED -> red
-        else -> orange
+        TaskStatus.RESOLVED -> green
+        TaskStatus.CANNOT_RESOLVE -> red
+        TaskStatus.UNRESOLVED -> orange
       }
 
   task?.let {
@@ -114,9 +115,9 @@ fun TaskDetailScreen(
                 modifier = modifier.padding(top = 16.dp, start = 8.dp),
                 text = title,
                 fontSize = 22.sp,
-                fontFamily = Constants.amsiproBoldFont,
+                fontFamily = Constants.AMSI_PRO_BOLD,
                 fontWeight = FontWeight.Bold,
-                color = if (taskStatus == STATUS_RESOLVED) green else red)
+                color = if (taskStatus == TaskStatus.RESOLVED) green else red)
           }
 
           Divider(color = LightWhite, modifier = Modifier.padding(8.dp).height(1.dp))
@@ -153,7 +154,7 @@ fun TaskDetailScreen(
                 text = description,
                 color = Black,
                 fontSize = 14.sp,
-                fontFamily = Constants.amsiproRegularFont,
+                fontFamily = Constants.AMSI_PRO_REGULAR,
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp))
           }
 
@@ -164,28 +165,28 @@ fun TaskDetailScreen(
                       .height(1.dp))
 
           Text(
-              text = taskStatus,
+              text = taskStatus.name,
               color = statusColor,
               fontSize = 14.sp,
-              fontFamily = Constants.amsiproBoldFont,
+              fontFamily = Constants.AMSI_PRO_BOLD,
               fontWeight = FontWeight.Bold,
               modifier = Modifier.padding(start = 8.dp, end = 8.dp))
         }
       }
 
       when (taskStatus) {
-        STATUS_RESOLVED,
-        STATUS_UNRESOLVED -> ShowStatusImage(taskStatus)
-        "" -> ShowStatusButtons(modifier, viewModel)
+        TaskStatus.RESOLVED,
+        TaskStatus.CANNOT_RESOLVE -> ShowStatusImage(taskStatus)
+        TaskStatus.UNRESOLVED -> ShowStatusButtons(it, modifier, viewModel)
       }
     }
   }
 }
 
 @Composable
-private fun ShowStatusImage(taskStatus: String) {
+private fun ShowStatusImage(taskStatus: TaskStatus) {
   val taskResolveImage =
-      if (taskStatus == STATUS_RESOLVED) {
+      if (taskStatus == TaskStatus.RESOLVED) {
         painterResource(id = R.drawable.sign_resolved)
       } else {
         painterResource(id = R.drawable.unresolved_sign)
@@ -198,12 +199,12 @@ private fun ShowStatusImage(taskStatus: String) {
 }
 
 @Composable
-private fun ShowStatusButtons(modifier: Modifier, viewModel: TaskViewModel) {
+private fun ShowStatusButtons(task: Task, modifier: Modifier, viewModel: TaskViewModel) {
   Row(
       modifier = modifier.fillMaxWidth().padding(top = 8.dp),
       horizontalArrangement = Arrangement.SpaceEvenly) {
         Button(
-            onClick = { viewModel.updateTaskStatus(STATUS_RESOLVED) },
+            onClick = { viewModel.updateTaskStatus(TaskStatus.RESOLVED) },
             colors = ButtonDefaults.buttonColors(containerColor = green),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.weight(1f).padding(start = 16.dp, end = 8.dp)) {
@@ -211,12 +212,12 @@ private fun ShowStatusButtons(modifier: Modifier, viewModel: TaskViewModel) {
                   stringResource(R.string.resolve),
                   color = White,
                   fontSize = 18.sp,
-                  fontFamily = Constants.amsiproRegularFont,
+                  fontFamily = Constants.AMSI_PRO_REGULAR,
                   fontWeight = FontWeight.Bold)
             }
 
         Button(
-            onClick = { viewModel.updateTaskStatus(STATUS_UNRESOLVED) },
+            onClick = { viewModel.updateTaskStatus(TaskStatus.CANNOT_RESOLVE) },
             colors = ButtonDefaults.buttonColors(containerColor = red),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.weight(1f).padding(start = 8.dp, end = 16.dp)) {
@@ -224,7 +225,7 @@ private fun ShowStatusButtons(modifier: Modifier, viewModel: TaskViewModel) {
                   stringResource(R.string.cant_resolve),
                   color = White,
                   fontSize = 18.sp,
-                  fontFamily = Constants.amsiproRegularFont,
+                  fontFamily = Constants.AMSI_PRO_REGULAR,
                   fontWeight = FontWeight.Bold)
             }
       }

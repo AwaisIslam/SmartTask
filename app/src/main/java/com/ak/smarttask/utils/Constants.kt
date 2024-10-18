@@ -8,9 +8,7 @@ import com.ak.smarttask.R
 object Constants {
   const val LOG_TAG = "SmartTask"
   const val BASE_URL = "https://demo1414406.mockable.io/"
-  val amsiproBoldFont = FontFamily(Font(R.font.amsiprobold, FontWeight.Bold))
-  val amsiproRegularFont = FontFamily(Font(R.font.amsiproregular, FontWeight.Normal))
-  const val STATUS_RESOLVED = "Resolved"
-  const val STATUS_UNRESOLVED = "Unresolved"
+  val AMSI_PRO_BOLD = FontFamily(Font(R.font.amsiprobold, FontWeight.Bold))
+  val AMSI_PRO_REGULAR = FontFamily(Font(R.font.amsiproregular, FontWeight.Normal))
   const val DATE_PATTERN = "yyyy-MM-dd"
 }
